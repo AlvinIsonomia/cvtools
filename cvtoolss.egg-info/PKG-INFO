@@ -1,0 +1,20 @@
+Metadata-Version: 1.1
+Name: cvtoolss
+Version: 0.0.2
+Summary: Computer Vision Foundation Utilities
+Home-page: https://github.com/gfjiangly/cvtools
+Author: Guangfeng Jiang
+Author-email: gfjiang_xxjl@163.com
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: computer vision
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Topic :: Utilities
