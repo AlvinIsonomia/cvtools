@@ -18,7 +18,7 @@ class DOTA2COCO(object):
     def __init__(self,
                  label_root,
                  image_root,
-                 cls_map='dota/cat_id_map.txt',
+                 cls_map='/home/liuchang/data/cvtools/cvtools/label_convert/dota/dota_v1.5_cat_id_map.txt',
                  path_replace=None,
                  box_form='x1y1wh'):
         self.label_root = label_root
@@ -28,8 +28,8 @@ class DOTA2COCO(object):
         self.files = []
         self.files += cvtools.get_files_list(
             label_root, basename=True)
-        if cvtools._DEBUG:
-            self.files = self.files[:10]
+#         if cvtools._DEBUG:
+#             self.files = self.files[:10]
         self.lines = []
         self.cls_map = cvtools.read_key_value(cls_map)
         self.coco_dataset = {
@@ -78,8 +78,10 @@ class DOTA2COCO(object):
                 continue
 
             # add image information to dataset
-            for key, value in self.path_replace.items():
-                image_name = image_name.replace(key, value)
+            if self.path_replace is not None:
+                for key, value in self.path_replace.items():
+                    image_name = image_name.replace(key, value)
+                    
             img_info = {
                 'file_name': image_name,    # relative path
                 'id': self.imageID,
