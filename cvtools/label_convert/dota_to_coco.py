@@ -7,7 +7,7 @@
 import json
 import os.path as osp
 from tqdm import tqdm
-import cv2.cv2 as cv
+import cv2 as cv
 from PIL import Image
 import numpy as np
 
@@ -18,7 +18,7 @@ class DOTA2COCO(object):
     def __init__(self,
                  label_root,
                  image_root,
-                 cls_map='/home/liuchang/data/cvtools/cvtools/label_convert/dota/dota_v1.5_cat_id_map.txt',
+                 cls_map='/home/liuchang/cvtools/cvtools/label_convert/dota/dota_v1.5_cat_id_map.txt',
                  path_replace=None,
                  box_form='x1y1wh'):
         self.label_root = label_root
@@ -113,9 +113,11 @@ class DOTA2COCO(object):
                     box = cv.boundingRect(a_hull)
                     area = box[2] * box[3]
                 elif self.box_form == 'xywha':
+                    box = cv.boundingRect(a_hull) # add normal box
+                    area = box[2] * box[3]        # add normalbox            
                     xywha = cv.minAreaRect(a_hull)
-                    area = xywha[1][0] * xywha[1][1]
-                    box = list(xywha[0]) + list(xywha[1]) + [xywha[2]]
+                    # area = xywha[1][0] * xywha[1][1] # removed
+                    rbox = list(xywha[0]) + list(xywha[1]) + [xywha[2]]
                 elif self.box_form == 'x1y1x2y2x3y3x4y4':
                     area = cv.contourArea(a_hull)
                     box = list(a_hull.reshape(-1).astype(np.float))
@@ -125,17 +127,32 @@ class DOTA2COCO(object):
                 box = list(map(lambda x: round(x, 2), box))
                 cat = line[8].strip()
                 difficult = int(line[9].strip())
-                self.coco_dataset['annotations'].append({
-                    'area': area,
-                    'bbox': box,
-                    'category_id': int(self.cls_map[cat]),  # 0 for backgroud
-                    'id': self.annID,
-                    'image_id': self.imageID,
-                    'iscrowd': 0,
-                    'ignore': ignore,
-                    'difficult': difficult,
-                    'segmentation': [polygon]
-                })
+                
+                if (self.box_form != 'xywha'):
+                    self.coco_dataset['annotations'].append({
+                        'area': area,
+                        'bbox': box,
+                        'category_id': int(self.cls_map[cat]),  # 0 for backgroud
+                        'id': self.annID,
+                        'image_id': self.imageID,
+                        'iscrowd': 0,
+                        'ignore': ignore,
+                        'difficult': difficult,
+                        'segmentation': [polygon]
+                    })
+                else:
+                    self.coco_dataset['annotations'].append({
+                        'area': area,
+                        'bbox': box,
+                        'rbbox':rbox,
+                        'category_id': int(self.cls_map[cat]),  # 0 for backgroud
+                        'id': self.annID,
+                        'image_id': self.imageID,
+                        'iscrowd': 0,
+                        'ignore': ignore,
+                        'difficult': difficult,
+                        'segmentation': [polygon]
+                    })                    
                 self.annID += 1
             self.imageID += 1
 
